@@ -53,4 +53,4 @@ El proceso de pausar y parar videos usa una variable que alberga un valor boolea
 
 - ### Total: **30 horas**
 
-###### añadido el aprender react native y leer la documentación que entre una cosa y otra consume tiempo
+###### *Añadido el aprender react native y leer la documentación que entre una cosa y otra consume tiempo
