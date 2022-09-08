@@ -1,0 +1,98 @@
+Okey, tras unas horas de pelearme con él he conseguido iniciar android estudio, a ver como enfocamos esto, vamos de lo más fácil a lo más difícil
+
+Lo primero es lo primero, vaciarlo todo, y quedar con la pantalla en blanco he dejado el scrollview que permite scrollear aunque aquí no debería hacer falta y el view que por lo que vi es el elemento básico igual que un div
+
+Ahora va  la home que tendrá un header y tres botones, hasta ahí facil, lo siguiente que al pulsar el botón cambie de página 
+
+Estoy viendo que eso se hace con navigation, creamos un componente y un button, al button le añadimos una funcion onpress y al pulsar le decimos navigate to el componente, vamos a ir paso a paso, crear los tres botones
+
+Ha sido fácil, solo una etiqueta button, los estilos irán luego, vamos a añadir la funcionalidad primero que es lo más difícil al no conocerla y cuando acabe lo pongo bonito, dice la documentación que para cambiar entre pantallas necesitamos usar create navigator container, lo que vayamos a navegar lo envolvemos en navigation container, creamos una variable con el metodo createnativestacknavigator
+no había nombres más cortos se ve, y luego usamos esa variable con un . y screen para indicar la pantalla, cada screen tiene un nombre y un componente, ese componente será lo que se renderizará
+
+VAAALE, ya he conseguido que funcione el navigator, solo necesité eh... un par de horas, la cosa va así, la app la he vaciado entera, y dentro solo tiene el navigator, están importados los demás componentes, usando stack le decimos, esta screen se llama así y renderiza este componente. Por defecto me renderiza home, no sé si es bug o feature pero funciona. 
+
+Hecho eso, en home es donde van los botones, home recibe por parametros el objeto navigation, cambiar de pantalla es tan fácil como en el evento on press decirle navigation.navigate y le pasamos, importante esto EL NOMBRE DE LA SCREEN, no el elemento. 
+
+Además esta cosa maja ya te pone la flecha para volver atrás, si me sobra tiempo a ver si consigo hacer que funcione también usando swipes al deslizar el dedo, quizá un array con indice que cambie con redux a la izquierda bajas al indice 1 que corresponde a tal a la derecha subes al siguiente pero bueno si sobra tiempo que darle estilo a esto será gracioso
+
+okay ya tengo las tres pantallas, el diseño será lo ultimo vamos a la primera, la idea es hacer una petición a una api y pintarla aquí 
+
+He mirado la api y te da un array de objetos, cada objeto un animal con una serie de propiedades, entiendo que quiere que mostremos los diferentes animales de cada petición, esto podría hacerse agrupando cada objeto y por cada uno hacemos un div o view o como se llame y dentro de ese pintamos sus propiedades, inicialmente vamos a hacer la petición, si recuerdo bien en esto lo suyo es usar useeffect para que se lance cuando entres, la petición es por get por supuesto
+
+voy a usar axios para las peticiones por sencillez de no estar pegando con httprequest y tal
+
+ale, la primera ya está, he tardado un ratete porque siempre olvido usar el .data cuando es una response, el resto ha sido crear un componente para en apiscreen hacer un map y pasarle cada animal a ese componente, ya dentro de ese componente recibimos en el animal y cogemos su nombre, hábitat e imagen y lo ponemos, ojito con la etiqueta image que si no le asignas estilo en ancho y alto no se ve
+
+pasamos a la siguiente parte, usar redux, aquí lo suyo es crear un redux global en app o en home y cuando recibes el response de la api dice el ultimo resultado se puede interpretar como la ultima llamada o el último de la llamada, en cualquier caso, lo actualizas y en la pantalla de redux usas ese state para crear los elementos, de hecho podría reusar aqui el componente de animal pero mejor lo hago aparte y le doy estilos distintos
+
+okey, llevo unas 6 horas aunque tres se han ido en configurar el entorno, anyway, hacía mil que no tocaba redux y parece que ya va, es simple, un store que tiene como reducer animalreducer, este a su vez solo tiene un reducer dentro (recuerda llamarlo en el dispatch con animalReducer.actions.changeAnimal(animals)) basicamente le pasamos los animales y actualiza el estado, un poco chapuza, por darle encanto al reducer voy a hacer la parte de seleccionar el ultimo dentro del mismo
+
+DIA 1
+jo-der como se me ha atragantado el redux, tres horas viendo porqué no actualizaba, la primera vez me cargaba en el estado bien el animal pero la segunda me daba undefined, la solución ha sido pasar en action payload en lugar del objeto animals la propia response de la api, porque se conoce que al ser esto asincrono intentaba realizarlo todo antes de haber sustituido el animals y por tanto animals era undefined o a veces el valor antiguo sin actualizarse, el porqué la primera vez que cargaba funcionaba guay pues a saber, magia informática, hecho eso ya es cuestión de coger el ultimo elemento del array de action payload y guardarlo para consultarlo en la otra pantalla
+
+nota para el futuro, cuando la imagen no se mmuestre comprueba que no se te haya ido el wifi antes de echar media hora con el código
+
+ale, segundo ejercicio hecho, vamos a la parte difícil, el tercero y la movida de los estilos que aquí va rarísimo
+
+Lo primero vamos a analizar la imagen que nos dan, tenemos un titulo a dos colores esto podría hacerlo con una imagen en plan recortar la que me dan y pegarla pero es cutre o puedo hacer dos elementos text, el primero con las dos letras de un color y el segundo con las otras tres, jugando con tamaño, fuente y spacing queda guay, el icono del corazón podría ir con fontawesome si es que funciona en react native o con material ui
+
+Luego tenemos una barra de busqueda, incluye un icono en el placeholder no sé si podrá meterse tal cual pero en teoría podría ponerlo con position absolute y usar input:focus o lo que sea en native para ponerle display none cuando se escribe, el color y el borde es solo jugar con radius
+
+Luego tenemos un titulo y un reel, cada reel tiene un video pero también un pie, lo suyo sería agrupar todo en un View, que el reel ocupe todo y que el pie sea a su vez un view con position absolute, el como hacer el scrool ya lo veo luego.
+
+El siguiente reel es casi igual pero dentro tiene una imagen con border y object fit cober.
+
+En el tercero lo mismo, acuerdate de que para hacer esos letreritos con bordes redondos alternos puedes usar border-radius top left y bottom right
+
+Esperate que no puedes importar las fuentes tal cual, tienes que descargarlas a una carpeta y luego importarlas desde ahí
+
+A ver como va esto, las fuentes las descargas, luego en source creas una carpeta assets y una carpeta para fuentes, luego creamos un archivo que debe llamarse react-native.config.js y ahí ponemos el path 
+Luego ejecutas react native asset y en teoria ya funciona, en teoria claro. vale funciona, recuerda en el futuro cuando hagas estos cambios parar la app y volverla a arrancar que a veces no los pilla
+
+Para el corazón he tenido que usar react-native-vector-icons y recuerda al instalarlo ir a android/app/build.gradle y copiar esto: apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+
+Lo mismo para IOS pero cambiando la ruta y tal, CUANDO USES ICONS mira que importas el icon de reactnativeicosn PERO con la barra/ indicas si quieres el pack de iconos de fontawesome el de entyco o el que sea, asegurate de importar al que pertenezca el icono que usarás
+El circulo rojo va a ser un span con border radius y position absolute 
+
+vamos a por los reels, esta es la parte dificil
+
+Dia 1: voy bien de tiempo, yo del mañana, quedas trabajando en el reel de trending, es muy similar al primero y clases como la del boton pueden reusarse, la lógica igual aunque tendrás que adaptarla un poco, ya que estoy te paso los deberes de documentar como funciona la flatlist, el codigo de pausar y continuar el video  y el reel de imagenes, al final todos se basan en flatlist el unico dificil es el video que usa una librería que android no soporta y tienes que añadir una linea en el bundle de android y virguerías hasta que termina funcionando, los videos están almacenados en local como voy bien de tiempo a ver si consigo hacerlo con las urls webs, el problema con ellas es que en html normalmente te resulve la url, aqui la dirección apunta al video pero no al archivo en si .mp4 sino a un archivo web y el componente no lo renderiza, algo se podrá hacer
+
+Also como esto eran tres dias y casi acabo en el primero mañana pongo bonito el resto de paginas, refactorizo design haciendo un componente para cada flatlist que entre los imports, los estilos y demás el codigo es un lio, recuerda al hacer el componente seguir esta logica: creas el componente => lo añades a la pagina para ver que va funcionando, copias allí los imports y data que usa, copias la función que actualiza el estado, PERO SIEMPRE SIN BORRAR NADA DEL ORIGINAL, cuando todo lo importante esté copiado y funcione y tengas el original y la copia corriendo entonces ya borras y compruebas que siga funcionando, lo mismo en los estilos
+
+SOBRE LOS VIDEOS Y LA URL estoy cotilleando la api de pexels y si haces una petición te devuelve una url que si funciona con su extensión de archivo y tal, también vale para imagenes, si me sobra tiempo al terminar la miro aunque para videos estáticos es un poco desperdicio hacer siempre la misma petición si sabes que vas a tener solo 5 y los puedes almacenar pero oye si quieres crear galerias dinámicas que pongan videos alatorios puede ser interesante
+
+Funcionamiento de los reels, todos van envueltos en un wrapper que les marca el tamaño máximo y el ancho aunque en este caso sea todo el ancho, con el wrapper podemos jugar con margenes y demás. Luego viene la flatlist, flatlist es un componente que básicamente te hace un for each , en data le pasas la información. 
+
+Para la información he guardado los recursos en una carpeta, importado los videos como variables y luego creado un array de objetos que contiene el texto y el video, importante poner horizontal en true para que vaya en esa dirección, hay muchas propiedades que puedes ponerle pero la importante es renderItem, aquí es donde le dices que tiene que hacer, su estructura es rara:
+
+renderItem = {({item,index}) => (
+  cosas a renderizar
+)}
+
+IMPORTANTE, cuando he probado a cambiar el nombre de item aunque en teoría debería funcionar no lo hace, no sé si es cosa de como funciona renderItem, así que llamalo siempre así aunque la logica te diga que si tienes videodata a ese item deberías llamarle video.  El index es util para controlar el estado de estos elementos
+
+Dentro de rendervideo tenemos el objeto video, instalar react-native-video ha sido dificil, si tienes que volver a hacerlo recuerda que tienes que añadir jcenter() o algo así en android=>build.gradle, donde pone dependencies, aun así te dará fallos, a tirar de google hasta que quiera funcionar. 
+
+A ese video le ponemos la propiedad source que apunta a la propiedad uri de ese objeto en particular, el resto de propiedades se explican solas, la interesante es paused
+
+paused={ispaused[index]}
+
+Para gestionar el estado del video he creado un array que inicialmente son [true,true,true,true,true]
+
+Como cada video lleva un index buscará su posición en ese array y le dirá si está pausado o no, por defecto todos están pausados
+
+Tras el video vienen varios divs o views que basicamente se usan para estilo para posicionar las cosas en x sitio darle efectos y demás, interesante el botón
+
+Cuando quieres modificar el estilo de un boton usas pressable en lugar de buton, el boton va dentro de un div que hace el circulito ese grs y dentro tiene un Icon 
+Para el estilo igual que teniamos un array con ispaused para determinar el estado del video tenemos otro llamado ispressed para el boton, usa el index para encontrar la posición que corresponde a este boton, si es true (aqui deberia ser false tengo que refactorizar esa parte para que sea mas logica o cambiarle el nombre a unpressed y ya se entiende) le da el estilo del boton normal, si es false le da otro, que en realidad es solo display none, ojo que esta condicion se hace en el wrapper del boton para esconder tambien el circulo.
+
+En onpressed llamamos a una funcion handleClick y le pasamos el index en que se ha clicado
+
+esa funcion usa el hook de ispaused y el de ispressed, en ambos hace lo mismo, ejecuta una función para mapear el array y compara si la i es la misma que el index, si lo es devuelve false si no devuelve true.
+
+De esta manera cuando pinchas en el primer video pondrá el primer elemento de ispaused en false, la propiedad paused del video que equivalia a ese elemento se cambia y se reproducirá, al devolver true en el resto de elementos también se paran los demás videos. Esto funciona con el boton también haciendo que el botón de ese indice se esconda y los demás cambien su style para ser visibles
+
+La seccion de community funciona exactamente igual pero mas simple porque son imágenes, es ponerlas de la misma manera cargarlas en un array pasarselo a flatlist y luego el trabajo está en los estilos. Y la de trending igualita que la de videos aunque hay que hacer una funcion y un estado aparte para gestionarlo porque si reusas el handleClick pones en play los de destinos
+
+Perfecto, terminado, he aprovechado para darle estilo a los otros dos, nada relevante que no se vea viendo los estilos, como sobra tiempo voy a refactorizar el design y hacer un componente por cada reel porque abultan un montón y hacen el código lioso
